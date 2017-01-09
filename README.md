@@ -6,4 +6,4 @@ Latitude, longitude, altitude, speed, bearing, address
 
 Pending changes:
 Speed should be changed from m/s into km/h.
-Map view should refres
+Map view should refresh each half a sec
