@@ -1,8 +1,14 @@
 package com.example.prezes.geolesson;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -10,6 +16,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,6 +37,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         com.google.android.gms.location.LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -47,10 +59,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private CameraPosition mCameraPosition;
     private static final int DEFAULT_ZOOM = 15;
 
+    ImageView imageView;
+    TextView lngT;
+    TextView latT;
+    TextView altT;
+    TextView bearingT;
+    TextView speedT;
+    TextView accuracyT;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        imageView = (ImageView) findViewById(R.id.imageViewID);
+        lngT = (TextView) findViewById(R.id.lngID);
+        latT = (TextView) findViewById(R.id.latID);
+        altT = (TextView) findViewById(R.id.altID);
+        bearingT = (TextView) findViewById(R.id.bearingID);
+        speedT = (TextView) findViewById(R.id.speedID);
+        accuracyT = (TextView) findViewById(R.id.accuracyID);
 
         if (savedInstanceState != null) {
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
@@ -58,9 +86,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Toast.makeText(this, "GPS is Enabled in your devide", Toast.LENGTH_SHORT).show();
+        }else{
+            showGPSDisabledAlertToUser();
+        }
     }
 
-
+    private void showGPSDisabledAlertToUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Goto Settings Page To Enable GPS",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                Intent callGPSSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(callGPSSettingIntent);
+                            }
+                        });
+        alertDialogBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
 
     @Override
     protected void onResume() {
@@ -111,12 +167,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
+        double lng = location.getLongitude();
+        double lat = location.getLatitude();
+        double alt = location.getAltitude();
+        float bearing = location.getBearing();
+        float speed = location.getSpeed();
+        float accuracy = location.getAccuracy();
+
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+        try{
+
+            List<Address> addressList = geocoder.getFromLocation(lat,lng,1);
+
+            if(addressList != null && addressList.size() > 0){
+                Log.i("place info: ", addressList.get(0).toString());
+
+                String addressHolder = "";
+
+                for(int i = 0; i <= addressList.get(0).getMaxAddressLineIndex(); i++) {
+                    addressHolder = addressHolder + addressList.get(0).getAddressLine(i) + "\n";
+                Toast.makeText(getApplicationContext(), addressHolder.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        lngT.setText("Longitude: " + lng);
+        latT.setText("Latitude: " + lat);
+        altT.setText("Altitude: " + alt + " m");
+        bearingT.setText("Bearing: " + bearing);
+        speedT.setText("Speed: " + speed + " m/s");
+        accuracyT.setText("Accuracy: " + accuracy + " m");
 //        updateMarkers();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         updateLocationUI();
 //        updateMarkers();
 

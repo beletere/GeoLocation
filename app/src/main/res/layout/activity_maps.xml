@@ -1,8 +1,102 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.prezes.geolesson.MapsActivity" />
+    tools:context=".MapsActivity">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        tools:context="com.example.prezes.geolesson.MapsActivity"
+        android:layout_height="250dp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageViewID"
+        android:layout_marginTop="250dp"
+        android:elevation="0dp"
+        android:background="@drawable/view"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:text="Longitude:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lngID"
+        android:textSize="25sp"
+        android:textStyle="normal|bold|italic"
+        android:textColor="#dafb9816"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="270dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:text="Latitude:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/latID"
+        android:layout_below="@+id/lngID"
+        android:layout_centerHorizontal="false"
+        android:textSize="25sp"
+        android:textStyle="normal|bold|italic"
+        android:textColor="@android:color/holo_red_light"
+        android:layoutDirection="locale"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="300dp" />
+    <TextView
+        android:text="Altitude:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/altID"
+        android:layout_below="@+id/lngID"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp"
+        android:textStyle="normal|bold|italic"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@android:color/holo_red_light"
+        android:layout_marginTop="330dp" />
+
+    <TextView
+        android:text="Speed:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/speedID"
+        android:layout_below="@+id/altID"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp"
+        android:layout_gravity="center_horizontal"
+        android:textStyle="normal|bold|italic"
+        android:textColor="#dafb9816"
+        android:layout_marginTop="360dp" />
+    <TextView
+        android:text="Accuracy:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/accuracyID"
+        android:layout_below="@+id/speedID"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:textSize="25sp"
+        android:textStyle="normal|bold|italic"
+        android:textColor="@android:color/holo_red_light"
+        android:layout_marginTop="390dp" />
+    <TextView
+        android:text="Bearing:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bearingID"
+        android:layout_below="@+id/accuracyID"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp"
+        android:textStyle="normal|bold|italic"
+        android:textColor="@android:color/holo_red_light"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="420dp"
+        android:gravity="center_horizontal"
+        />
+
+
+</FrameLayout>
